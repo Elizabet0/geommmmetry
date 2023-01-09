@@ -1,13 +1,11 @@
 package app;
+
 import controls.Label;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.jwm.skija.EventFrameSkija;
 import io.github.humbleui.skija.Canvas;
-import io.github.humbleui.skija.Paint;
-import io.github.humbleui.skija.RRect;
 import io.github.humbleui.skija.Surface;
 import misc.CoordinateSystem2i;
-import misc.Misc;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -26,7 +24,7 @@ public class Application implements Consumer<Event> {
     /**
      * отступы панелей
      */
-    public static final int PANEL_PADDING = 5;
+    private static final int PANEL_PADDING = 5;
     /**
      * радиус скругления элементов
      */
@@ -35,26 +33,57 @@ public class Application implements Consumer<Event> {
      * Первый заголовок
      */
     private final Label label;
+    /**
+     * Первый заголовок
+     */
+    private final Label label2;
+    /**
+     * Первый заголовок
+     */
+    private final Label label3;
+
 
     /**
      * Конструктор окна приложения
      */
     public Application() {
+        // создаём окно
         window = App.makeWindow();
+
         // создаём первый заголовок
         label = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
-                "Привет, мир!", true, true);
+                4, 4, 1, 1, 1, 1, "Привет, мир!", true, true);
+
+        // создаём второй заголовок
+        label2 = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
+                4, 4, 0, 3, 1, 1, "Второй заголовок", true, true);
+
+        // создаём третий заголовок
+        label3 = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
+                4, 4, 2, 0, 1, 1, "Это тоже заголовок", true, true);
+
+
+        // задаём обработчиком событий текущий объект
         window.setEventListener(this);
+        // задаём заголовок
         window.setTitle("Java 2D");
+        // задаём размер окна
         window.setWindowSize(900, 900);
+        // задаём его положение
         window.setWindowPosition(100, 100);
+        // задаём иконку
+
         switch (Platform.CURRENT) {
             case WINDOWS -> window.setIcon(new File("src/main/resources/windows.ico"));
             case MACOS -> window.setIcon(new File("src/main/resources/macos.icns"));
         }
+
+        // названия слоёв, которые будем перебирать
         String[] layerNames = new String[]{
                 "LayerGLSkija", "LayerRasterSkija"
         };
+
+        // перебираем слои
         for (String layerName : layerNames) {
             String className = "io.github.humbleui.jwm.skija." + layerName;
             try {
@@ -65,8 +94,12 @@ public class Application implements Consumer<Event> {
                 System.out.println("Ошибка создания слоя " + className);
             }
         }
+
+        // если окну не присвоен ни один из слоёв
         if (window._layer == null)
             throw new RuntimeException("Нет доступных слоёв для создания");
+
+        // делаем окно видимым
         window.setVisible(true);
     }
 
@@ -76,19 +109,19 @@ public class Application implements Consumer<Event> {
      * @param e событие
      */
     @Override
-        public void accept(Event e) {
-            if (e instanceof EventWindowClose) {
-                App.terminate();
-            }else if (e instanceof EventWindowCloseRequest) {
-                window.close();
-            }
-            else if (e instanceof EventFrameSkija ee) {
-                Surface s = ee.getSurface();
-                paint(s.getCanvas(), new CoordinateSystem2i(
-                        s.getWidth() / 3, s.getHeight() / 3,
-                        s.getWidth() / 3,  s.getHeight() / 3));
-            }
+    public void accept(Event e) {
+        // если событие - это закрытие окна
+        if (e instanceof EventWindowClose) {
+            // завершаем работу приложения
+            App.terminate();
+        } else if (e instanceof EventWindowCloseRequest) {
+            window.close();
+        } else if (e instanceof EventFrameSkija ee) {
+            Surface s = ee.getSurface();
+            paint(s.getCanvas(), new CoordinateSystem2i(s.getWidth(), s.getHeight()));
+        }
     }
+
     /**
      * Рисование
      *
@@ -100,8 +133,12 @@ public class Application implements Consumer<Event> {
         canvas.save();
         // очищаем канвас
         canvas.clear(APP_BACKGROUND_COLOR);
-        // рисуем заголовок в точке [100,100] с шириной и выостой 200
-        label.paint(canvas, new CoordinateSystem2i(100, 100, 200, 200));
+        // рисуем заголовок
+        label.paint(canvas, windowCS);
+        // рисуем второй заголовок
+        label2.paint(canvas, windowCS);
+        // рисуем третий заголовок
+        label3.paint(canvas, windowCS);
         // восстанавливаем состояние канваса
         canvas.restore();
     }
