@@ -27,9 +27,13 @@ public class Task {
      */
     public static final String TASK_TEXT = """
             ПОСТАНОВКА ЗАДАЧИ:
-            Заданы два множества точек в вещественном
-            пространстве. Требуется построить пересечение
-            и разность этих множеств""";
+            Дано множество точек на плоскости.
+            Выберем из этого множества две точки и проведем
+            через них прямую. Назовем дистанцией такую величину,
+            что на расстоянии от прямой не меньше, чем дистанция
+            лежит хотя бы половина оставшихся точек множества 
+            (кроме этих двух). Найти такую пару точек, у 
+            которой дистанция будет минимальна.""";
 
 
     /**
@@ -139,7 +143,7 @@ public class Task {
         solved = false;
         Point newPoint = new Point(pos, pointSet);
         points.add(newPoint);
-        PanelLog.info("точка " + newPoint + " добавлена в " + newPoint.getSetName());
+        PanelLog.info("точка " + newPoint + " добавлена");
     }
 
 
@@ -158,7 +162,7 @@ public class Task {
             addPoint(taskPos, Point.PointSet.FIRST_SET);
             // если правая, то во второе
         } else if (mouseButton.equals(MouseButton.SECONDARY)) {
-            addPoint(taskPos, Point.PointSet.SECOND_SET);
+            addPoint(taskPos, Point.PointSet.FIRST_SET);
         }
     }
 
@@ -178,7 +182,7 @@ public class Task {
             if (ThreadLocalRandom.current().nextBoolean())
                 addPoint(pos, Point.PointSet.FIRST_SET);
             else
-                addPoint(pos, Point.PointSet.SECOND_SET);
+                addPoint(pos, Point.PointSet.FIRST_SET);
         }
     }
 
