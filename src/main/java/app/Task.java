@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.github.humbleui.jwm.MouseButton;
 import io.github.humbleui.skija.*;
-import lombok.Getter;
 import misc.CoordinateSystem2d;
 import misc.CoordinateSystem2i;
 import misc.Vector2d;
@@ -31,28 +30,29 @@ public class Task {
             Заданы два множества точек в вещественном
             пространстве. Требуется построить пересечение
             и разность этих множеств""";
+
+
     /**
-     * коэффициент колёсика мыши
+     *  коэффициент колёсика мыши
      */
     private static final float WHEEL_SENSITIVE = 0.001f;
+
     /**
      * Вещественная система координат задачи
      */
-    @Getter
     private final CoordinateSystem2d ownCS;
     /**
      * Список точек
      */
-    @Getter
     private final ArrayList<Point> points;
     /**
      * Размер точки
      */
     private static final int POINT_SIZE = 3;
     /**
-     * последняя СК окна
+     * Последняя СК окна
      */
-    protected CoordinateSystem2i lastWindowCS;
+    private CoordinateSystem2i lastWindowCS;
     /**
      * Флаг, решена ли задача
      */
@@ -60,20 +60,17 @@ public class Task {
     /**
      * Список точек в пересечении
      */
-    @Getter
-    @JsonIgnore
     private final ArrayList<Point> crossed;
     /**
      * Список точек в разности
      */
-    @Getter
-    @JsonIgnore
     private final ArrayList<Point> single;
     /**
      * Порядок разделителя сетки, т.е. раз в сколько отсечек
      * будет нарисована увеличенная
      */
     private static final int DELIMITER_ORDER = 10;
+
     /**
      * Задача
      *
@@ -81,10 +78,7 @@ public class Task {
      * @param points массив точек
      */
     @JsonCreator
-    public Task(
-            @JsonProperty("ownCS") CoordinateSystem2d ownCS,
-            @JsonProperty("points") ArrayList<Point> points
-    ) {
+    public Task(@JsonProperty("ownCS") CoordinateSystem2d ownCS, @JsonProperty("points") ArrayList<Point> points) {
         this.ownCS = ownCS;
         this.points = points;
         this.crossed = new ArrayList<>();
@@ -105,6 +99,7 @@ public class Task {
         // рисуем задачу
         renderTask(canvas, windowCS);
     }
+
     /**
      * Рисование задачи
      *
@@ -133,6 +128,7 @@ public class Task {
         }
         canvas.restore();
     }
+
     /**
      * Добавить точку
      *
@@ -143,9 +139,10 @@ public class Task {
         solved = false;
         Point newPoint = new Point(pos, pointSet);
         points.add(newPoint);
-        // Добавляем в лог запись информации
         PanelLog.info("точка " + newPoint + " добавлена в " + newPoint.getSetName());
     }
+
+
     /**
      * Клик мыши по пространству задачи
      *
@@ -164,6 +161,8 @@ public class Task {
             addPoint(taskPos, Point.PointSet.SECOND_SET);
         }
     }
+
+
     /**
      * Добавить случайные точки
      *
@@ -182,6 +181,8 @@ public class Task {
                 addPoint(pos, Point.PointSet.SECOND_SET);
         }
     }
+
+
     /**
      * Рисование сетки
      *
@@ -219,6 +220,8 @@ public class Task {
         // восстанавливаем область рисования
         canvas.restore();
     }
+
+
     /**
      * Очистить задачу
      */
@@ -226,6 +229,7 @@ public class Task {
         points.clear();
         solved = false;
     }
+
     /**
      * Решить задачу
      */
@@ -242,7 +246,7 @@ public class Task {
                 Point b = points.get(j);
                 // если точки совпадают по положению
                 if (a.pos.equals(b.pos) && !a.pointSet.equals(b.pointSet)) {
-                    if (!crossed.contains(a)){
+                    if (!crossed.contains(a)) {
                         crossed.add(a);
                         crossed.add(b);
                     }
@@ -254,16 +258,56 @@ public class Task {
         for (Point point : points)
             if (!crossed.contains(point))
                 single.add(point);
+
         // задача решена
         solved = true;
     }
+
+    /**
+     * Получить тип мира
+     *
+     * @return тип мира
+     */
+    public CoordinateSystem2d getOwnCS() {
+        return ownCS;
+    }
+
+    /**
+     * Получить название мира
+     *
+     * @return название мира
+     */
+    public ArrayList<Point> getPoints() {
+        return points;
+    }
+
+    /**
+     * Получить список пересечений
+     *
+     * @return список пересечений
+     */
+    @JsonIgnore
+    public ArrayList<Point> getCrossed() {
+        return crossed;
+    }
+
+    /**
+     * Получить список разности
+     *
+     * @return список разности
+     */
+    @JsonIgnore
+    public ArrayList<Point> getSingle() {
+        return single;
+    }
+
     /**
      * Отмена решения задачи
      */
     public void cancel() {
         solved = false;
-
     }
+
     /**
      * проверка, решена ли задача
      *
@@ -272,6 +316,7 @@ public class Task {
     public boolean isSolved() {
         return solved;
     }
+
     /**
      * Масштабирование области просмотра задачи
      *
@@ -285,6 +330,7 @@ public class Task {
         // выполняем масштабирование
         ownCS.scale(1 + delta * WHEEL_SENSITIVE, realCenter);
     }
+
     /**
      * Получить положение курсора мыши в СК задачи
      *
@@ -297,6 +343,8 @@ public class Task {
     public Vector2d getRealPos(int x, int y, CoordinateSystem2i windowCS) {
         return ownCS.getCoords(x, y, windowCS);
     }
+
+
     /**
      * Рисование курсора мыши
      *

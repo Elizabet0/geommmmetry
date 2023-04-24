@@ -1,21 +1,23 @@
 package panels;
 
+import controls.Button;
 import app.Point;
 import app.Task;
-import java.util.ArrayList;
-
-import controls.*;
+import controls.Input;
+import controls.InputFactory;
+import controls.Label;
+import controls.MultiLineLabel;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.skija.Canvas;
 import misc.CoordinateSystem2i;
 import misc.Vector2d;
 import misc.Vector2i;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static app.Application.PANEL_PADDING;
-import static app.Colors.FIELD_BACKGROUND_COLOR;
-import static app.Colors.FIELD_TEXT_COLOR;
+import static app.Colors.*;
 
 /**
  * Панель управления
@@ -38,7 +40,7 @@ public class PanelControl extends GridPanel {
      */
     public List<Button> buttons;
     /**
-     * Кнопка "решить"
+     * кнопка решения
      */
     private final Button solve;
 
@@ -87,6 +89,7 @@ public class PanelControl extends GridPanel {
                 6, 7, 4, 2, 2, 1, "0.0", true,
                 FIELD_TEXT_COLOR, true);
         inputs.add(yField);
+
         Button addToFirstSet = new Button(
                 window, false, backgroundColor, PANEL_PADDING,
                 6, 7, 0, 3, 3, 1, "Добавить в первое\nмножество",
@@ -122,39 +125,35 @@ public class PanelControl extends GridPanel {
         });
         buttons.add(addToSecondSet);
 
-    // случайное добавление
-    Label cntLabel = new Label(window, false, backgroundColor, PANEL_PADDING,
-            6, 7, 0, 4, 1, 1, "Кол-во", true, true);
+        // случайное добавление
+        Label cntLabel = new Label(window, false, backgroundColor, PANEL_PADDING,
+                6, 7, 0, 4, 1, 1, "Кол-во", true, true);
         labels.add(cntLabel);
 
-    Input cntField = InputFactory.getInput(window, false, FIELD_BACKGROUND_COLOR, PANEL_PADDING,
-            6, 7, 1, 4, 2, 1, "5", true,
-            FIELD_TEXT_COLOR, true);
+        Input cntField = InputFactory.getInput(window, false, FIELD_BACKGROUND_COLOR, PANEL_PADDING,
+                6, 7, 1, 4, 2, 1, "5", true,
+                FIELD_TEXT_COLOR, true);
         inputs.add(cntField);
 
-    Button addPoints = new Button(
-            window, false, backgroundColor, PANEL_PADDING,
-            6, 7, 3, 4, 3, 1, "Добавить\nслучайные точки",
-            true, true);
-        addPoints.setOnClick(()->
-
-    {
-        // если числа введены верно
-        if (!cntField.hasValidIntValue()) {
-            PanelLog.warning("кол-во точек указано неверно");
-        } else
-            PanelRendering.task.addRandomPoints(cntField.intValue());
-    });
+        Button addPoints = new Button(
+                window, false, backgroundColor, PANEL_PADDING,
+                6, 7, 3, 4, 3, 1, "Добавить\nслучайные точки",
+                true, true);
+        addPoints.setOnClick(() -> {
+            // если числа введены верно
+            if (!cntField.hasValidIntValue()) {
+                PanelLog.warning("кол-во точек указано неверно");
+            } else
+                PanelRendering.task.addRandomPoints(cntField.intValue());
+        });
         buttons.add(addPoints);
+
         // управление
         Button load = new Button(
                 window, false, backgroundColor, PANEL_PADDING,
                 6, 7, 0, 5, 3, 1, "Загрузить",
                 true, true);
-        load.setOnClick(() -> {
-            PanelRendering.load();
-            cancelTask();
-        });
+        load.setOnClick(PanelRendering::load);
         buttons.add(load);
 
         Button save = new Button(
@@ -181,6 +180,7 @@ public class PanelControl extends GridPanel {
                 String s = "Задача решена\n" +
                         "Пересечений: " + PanelRendering.task.getCrossed().size() / 2 + "\n" +
                         "Отдельных точек: " + PanelRendering.task.getSingle().size();
+
                 PanelLog.success(s);
                 solve.text = "Сбросить";
             } else {
@@ -190,6 +190,7 @@ public class PanelControl extends GridPanel {
         });
         buttons.add(solve);
     }
+
     /**
      * Обработчик событий
      *
@@ -203,17 +204,18 @@ public class PanelControl extends GridPanel {
         if (e instanceof EventMouseMove ee) {
             for (Input input : inputs)
                 input.accept(ee);
+
             for (Button button : buttons) {
                 if (lastWindowCS != null)
                     button.checkOver(lastWindowCS.getRelativePos(new Vector2i(ee)));
             }
-
             // событие нажатия мыши
-        } else if (e instanceof EventMouseButton ee) {
-            if (!lastInside || !ee.isPressed())
+        } else if (e instanceof EventMouseButton) {
+            if (!lastInside)
                 return;
 
             Vector2i relPos = lastWindowCS.getRelativePos(lastMove);
+
             // пробуем кликнуть по всем кнопкам
             for (Button button : buttons) {
                 button.click(relPos);
@@ -258,7 +260,9 @@ public class PanelControl extends GridPanel {
      */
     @Override
     public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
+        // выводим текст задачи
         task.paint(canvas, windowCS);
+
         // выводим кнопки
         for (Button button : buttons) {
             button.paint(canvas, windowCS);
@@ -272,6 +276,7 @@ public class PanelControl extends GridPanel {
             label.paint(canvas, windowCS);
         }
     }
+
     /**
      * Сброс решения задачи
      */

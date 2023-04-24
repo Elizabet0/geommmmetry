@@ -43,6 +43,7 @@ public abstract class Panel implements Consumer<Event> {
      * последняя СК окна
      */
     protected CoordinateSystem2i lastWindowCS;
+
     /**
      * Конструктор панели
      *
@@ -88,12 +89,13 @@ public abstract class Panel implements Consumer<Event> {
     }
 
     /**
-     * Метод рисованияв конкретной реализации
+     * Метод под рисование в конкретной реализации
      *
      * @param canvas   область рисования
      * @param windowCS СК окна
      */
     public abstract void paintImpl(Canvas canvas, CoordinateSystem2i windowCS);
+
     /**
      * Проверка, содержит ли панель координаты
      *
@@ -105,6 +107,7 @@ public abstract class Panel implements Consumer<Event> {
             return lastWindowCS.checkCoords(pos);
         return false;
     }
+
     /**
      * Обработчик событий
      * при перегрузке обязателен вызов реализации предка

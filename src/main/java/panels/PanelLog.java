@@ -1,7 +1,8 @@
 package panels;
 
 import controls.Label;
-import io.github.humbleui.jwm.*;
+import io.github.humbleui.jwm.Event;
+import io.github.humbleui.jwm.Window;
 import io.github.humbleui.skija.Canvas;
 import io.github.humbleui.skija.FontMetrics;
 import io.github.humbleui.skija.Paint;
@@ -34,6 +35,10 @@ public class PanelLog extends GridPanel {
      * Список записей лога
      */
     private static final List<Record> logs = new ArrayList<>();
+
+    /**
+     * Тип записи
+     */
     enum RecordType {
         /**
          * Информация
@@ -52,6 +57,7 @@ public class PanelLog extends GridPanel {
          */
         SUCCESS
     }
+
     /**
      * Запись
      */
@@ -66,6 +72,8 @@ public class PanelLog extends GridPanel {
             return new SimpleDateFormat("  HH:mm:ss").format(date) + ": " + text;
         }
     }
+
+
     /**
      * Панель управления
      *
@@ -86,9 +94,8 @@ public class PanelLog extends GridPanel {
     ) {
         super(window, drawBG, color, padding, gridWidth, gridHeight, gridX, gridY, colspan, rowspan);
 
-
-
     }
+
     /**
      * Получить цвет строки лога
      *
@@ -103,6 +110,8 @@ public class PanelLog extends GridPanel {
             case SUCCESS -> Misc.getColor(144, 0, 255, 0);
         };
     }
+
+
     /**
      * Добавить в лога
      *
@@ -118,6 +127,7 @@ public class PanelLog extends GridPanel {
             }
         }
     }
+
     /**
      * Добавить info запись
      *
@@ -152,15 +162,6 @@ public class PanelLog extends GridPanel {
      */
     public static void error(String text) {
         addToLog(RecordType.ERROR, text);
-    }
-    /**
-     * Обработчик событий
-     *
-     * @param e событие
-     */
-    @Override
-    public void accept(Event e) {
-
     }
 
     /**

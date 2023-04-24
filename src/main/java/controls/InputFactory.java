@@ -32,6 +32,8 @@ public class InputFactory {
      */
     private static int tabPos = 0;
 
+
+
     static {
         // запускаем таймер, срабатывающий каждые 500 мс
         // он попеременно включает и выключает рисование курсора
@@ -42,7 +44,6 @@ public class InputFactory {
             }
         }, 0, 500);
     }
-
 
     /**
      * Получить новое поле ввода
@@ -84,6 +85,7 @@ public class InputFactory {
 
         return input;
     }
+
     /**
      * Снять фокус со всех полей ввода
      */
@@ -101,6 +103,7 @@ public class InputFactory {
     public static boolean cursorDraw() {
         return cursorDraw;
     }
+
     /**
      * Следующий элемент
      */

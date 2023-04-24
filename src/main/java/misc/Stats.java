@@ -1,8 +1,6 @@
 package misc;
 
 import io.github.humbleui.skija.*;
-import misc.CoordinateSystem2i;
-import misc.SumQueue;
 
 import static app.Colors.*;
 
