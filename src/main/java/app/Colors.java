@@ -73,4 +73,9 @@ public class Colors {
     private Colors() {
         throw new AssertionError("Вызов этого конструктора запрещён");
     }
+    /**
+     * Цвет заливки панели
+     */
+    public static final int DIALOG_BACKGROUND_COLOR = Misc.getColor(230, 70, 38, 83);
+
 }
